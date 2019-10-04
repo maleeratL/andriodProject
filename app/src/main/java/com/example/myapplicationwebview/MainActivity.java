@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.item1:
                 Toast.makeText(this,"Item 1 selected",Toast.LENGTH_SHORT).show();
-
+                this.printBackForwardList();
                 return true;
             case R.id.item2:
                 Toast.makeText(this,"Item 2 selected",Toast.LENGTH_SHORT).show();
@@ -137,5 +137,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public void printBackForwardList() {
+        WebBackForwardList currentList = webView.copyBackForwardList();
+        int currentSize = currentList.getSize();
+        for(int i = 0; i < currentSize; ++i)
+        {
+            WebHistoryItem item = currentList.getItemAtIndex(i);
+            String url = item.getUrl();
+            Log.d("History", "The URL at index: " + Integer.toString(i) + " is " + url );
+        }
+    }
 }
