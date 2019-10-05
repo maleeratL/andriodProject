@@ -1,8 +1,11 @@
 package com.example.myapplicationwebview;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 public class Main2Activity extends AppCompatActivity {
     private SQLiteDatabase mDatabase;
+    private HistoryAdapter mAdapter;
     private EditText mEditTextName;
     private TextView mTextViewAmount;
     private int mAmount =0;
@@ -23,6 +27,11 @@ public class Main2Activity extends AppCompatActivity {
 
         HistoryDBHelper dbHelper = new HistoryDBHelper(this);
         mDatabase = dbHelper.getWritableDatabase();
+
+        RecyclerView recyclerView = findViewById(R.id.recycleview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new HistoryAdapter(this,getAllItems());
+        recyclerView.setAdapter(mAdapter);
 
         mEditTextName = findViewById(R.id.edittext_name);
         mTextViewAmount = findViewById(R.id.textview_amount);
@@ -75,6 +84,22 @@ public class Main2Activity extends AppCompatActivity {
         cv.put(HistoryContract.HistoryEntry.COLUMN_AMOUNT, mAmount);
 
         mDatabase.insert(HistoryContract.HistoryEntry.TABLE_NAME, null, cv);
+        mAdapter.swapCursor(getAllItems());
+
         mEditTextName.getText().clear();
+    }
+
+    //Method to return a cursor
+    //because normally have to pass a cursor to adapter
+    private Cursor getAllItems(){
+        return  mDatabase.query(
+                HistoryContract.HistoryEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                HistoryContract.HistoryEntry.COLUMN_TIMESTAMP + " DESC"
+        );
     }
 }
